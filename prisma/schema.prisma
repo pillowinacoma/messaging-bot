@@ -25,10 +25,14 @@ model User {
   email    String    @unique
   name     String?
   messages Message[]
+  WebHook  WebHook[]
 }
 
 model WebHook {
-  id      Int       @id @default(autoincrement())
-  url     String    @unique
-  Message Message[]
+  id        Int       @id @default(autoincrement())
+  url       String    @unique
+  Messages  Message[]
+  plateform String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
 }

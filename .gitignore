@@ -1,10 +1,12 @@
 /node_modules/
 /build/
 /lib/
-/dist/
+/dist*
 /docs/
 .idea/*
 
 .DS_Store
 coverage
 *.log
+
+.env

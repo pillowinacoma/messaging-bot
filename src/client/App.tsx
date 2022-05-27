@@ -1,13 +1,14 @@
 import { FC, useState } from "react"
-import Login from "./pages/Login"
+import NavBar from "./pages/components/NavBar"
 import Dashboard from "./pages/Dashboard"
 
+export type LayoutType = "webhooks" | "messages"
 const App: FC = () => {
-  const [logged, setLogged] = useState(false)
-
+  const [layout, setLayout] = useState<LayoutType>("webhooks")
   return (
-    <div>
-      {!logged ? <Login onLogin={() => setLogged(true)} /> : <Dashboard />}
+    <div className="text-blue-800">
+      <NavBar layout={layout} setLayout={setLayout} />
+      <Dashboard layout={layout} />
     </div>
   )
 }

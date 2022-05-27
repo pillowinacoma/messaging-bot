@@ -119,15 +119,15 @@ export const getWebhooks: RequestHandler = async (_, res) => {
 }
 
 export const getWebhook: RequestHandler = async (req, res) => {
-  const { url } = req.body
-  if (!url) {
+  const { url } = req.query
+  if (!url || typeof url !== "string") {
     handleMissingParameters({ url }, res)
     return
   }
   const webhook = await prisma.webhook
     .findFirst({
       where: {
-        url,
+        url: url,
       },
       include: {
         messages: true,

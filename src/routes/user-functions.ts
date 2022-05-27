@@ -21,9 +21,9 @@ export const login: RequestHandler = async (req, res) => {
 }
 
 export const getUserMessages: RequestHandler = async (req, res) => {
-  const { userEmail } = req.body
+  const { userEmail } = req.query
 
-  if (!userEmail) {
+  if (!userEmail || typeof userEmail !== "string") {
     handleMissingParameters({ userEmail }, res)
     return
   }
@@ -41,9 +41,9 @@ export const getUserMessages: RequestHandler = async (req, res) => {
 }
 
 export const getUserWebhooks: RequestHandler = async (req, res) => {
-  const { userEmail } = req.body
+  const { userEmail } = req.query
 
-  if (!userEmail) {
+  if (!userEmail || typeof userEmail !== "string") {
     handleMissingParameters({ userEmail }, res)
     return
   }
@@ -63,9 +63,14 @@ export const getUserWebhooks: RequestHandler = async (req, res) => {
 }
 
 export const getUserMessagesByWebhook: RequestHandler = async (req, res) => {
-  const { userEmail, url } = req.body
+  const { userEmail, url } = req.query
 
-  if (!userEmail || !url) {
+  if (
+    !userEmail ||
+    !url ||
+    typeof url !== "string" ||
+    typeof userEmail !== "string"
+  ) {
     handleMissingParameters({ userEmail, url }, res)
     return
   }

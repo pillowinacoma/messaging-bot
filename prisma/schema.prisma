@@ -13,8 +13,8 @@ model Message {
   authorId  Int?
   webhook   Webhook @relation(fields: [webhookId], references: [id])
   webhookId Int
-  success   Boolean
   author    User?   @relation(fields: [authorId], references: [id])
+  success   Boolean
 }
 
 model User {

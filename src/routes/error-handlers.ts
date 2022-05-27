@@ -8,3 +8,11 @@ export const handlePrismaError = (
   console.warn(e)
   res.status(500).send({ error: e.message })
 }
+export const handleMissingParameters = (
+  params: Record<string, unknown>,
+  res: Response
+): void => {
+  const keyString = `{${Object.keys(params).reduce((a, b) => `${a}, ${b}`)}}`
+  const errorMessage = `required parameters : ${keyString}`
+  res.status(400).send({ error: errorMessage })
+}

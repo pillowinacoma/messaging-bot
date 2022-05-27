@@ -1,7 +1,7 @@
 import { RequestHandler } from "express"
 
 import { PrismaClient } from "@prisma/client"
-import { handlePrismaError } from "./error-handlers"
+import { handleMissingParameters, handlePrismaError } from "./error-handlers"
 
 const prisma = new PrismaClient()
 
@@ -9,7 +9,7 @@ export const createWebhook: RequestHandler = async (req, res) => {
   const { userEmail, url, plateform, isPublic } = req.body
 
   if (!userEmail || !url || !plateform) {
-    res.status(400).send() //Bad request
+    handleMissingParameters({ userEmail, url, plateform }, res)
     return
   }
   const user = await prisma.user.findFirst({
@@ -45,7 +45,7 @@ export const createWebhook: RequestHandler = async (req, res) => {
       return webhook
     })
   if (webhookExist) {
-    res.status(200).send({ data: webhookExist })
+    res.status(200).send({ webhook: webhookExist })
     return
   }
   const webhook = await prisma.webhook
@@ -65,13 +65,13 @@ export const createWebhook: RequestHandler = async (req, res) => {
       },
     })
     .catch((e) => handlePrismaError(e, res))
-  res.status(201).send({ data: webhook })
+  res.status(201).send({ webhook })
 }
 
 export const updateWebhook: RequestHandler = async (req, res) => {
   const { url, plateform, isPublic } = req.body
   if (!url) {
-    res.status(400).send({ error: "url required" }) //Bad request
+    handleMissingParameters({ url }, res)
     return
   }
   const webhook = await prisma.webhook
@@ -85,13 +85,13 @@ export const updateWebhook: RequestHandler = async (req, res) => {
       },
     })
     .catch((e) => handlePrismaError(e, res))
-  if (webhook) res.status(200).send({ data: webhook })
+  if (webhook) res.status(200).send({ webhook })
 }
 
 export const deleteWebhook: RequestHandler = async (req, res) => {
   const { url } = req.body
   if (!url) {
-    res.status(400).send({ error: "url required" }) //Bad request
+    handleMissingParameters({ url }, res)
     return
   }
   const webhook = await prisma.webhook
@@ -106,7 +106,7 @@ export const deleteWebhook: RequestHandler = async (req, res) => {
 }
 
 export const getWebhooks: RequestHandler = async (_, res) => {
-  const webhook = await prisma.webhook
+  const webhooks = await prisma.webhook
     .findMany({
       include: {
         messages: true,
@@ -115,13 +115,13 @@ export const getWebhooks: RequestHandler = async (_, res) => {
     })
     .catch((e) => handlePrismaError(e, res))
 
-  if (webhook) res.status(200).send({ data: webhook })
+  if (webhooks) res.status(200).send({ webhooks })
 }
 
 export const getWebhook: RequestHandler = async (req, res) => {
   const { url } = req.body
   if (!url) {
-    res.status(400).send({ error: "url required" }) //Bad request
+    handleMissingParameters({ url }, res)
     return
   }
   const webhook = await prisma.webhook
@@ -135,5 +135,5 @@ export const getWebhook: RequestHandler = async (req, res) => {
       },
     })
     .catch((e) => handlePrismaError(e, res))
-  if (webhook) res.status(200).send({ data: webhook })
+  if (webhook) res.status(200).send({ webhook })
 }

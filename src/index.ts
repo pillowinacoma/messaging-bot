@@ -55,4 +55,6 @@ app.use("/api", apiRouter)
 /**
  * On demande à Express d'ecouter les requêtes sur le port défini dans la config
  */
-app.listen(config.API_PORT, () => console.log("Silence, ça tourne."))
+app.listen(process.env.PORT ?? config.API_PORT, () =>
+  console.log("Silence, ça tourne.")
+)

@@ -9,23 +9,13 @@ interface IDashboard {
   layout: LayoutType
 }
 const Dashboard: FC<IDashboard> = ({ layout }) => {
-  const { email } = useAppContext()
-  const [messages, setMessages] = useState<Message[]>([])
-  const [webhooks, setWebhooks] = useState<Webhook[]>([])
+  const { email, setWebhooks, webhooks } = useAppContext()
 
   useEffect(() => {
     getUserWebhooks({ userEmail: email }, ({ webhooks }) =>
       setWebhooks(webhooks)
     )
   }, [])
-  useEffect(() => {
-    getUserMessages({ userEmail: email }, ({ messages }) =>
-      setMessages(messages)
-    )
-  }, [])
-
-  console.log(messages)
-  console.log(webhooks)
 
   return (
     <div>

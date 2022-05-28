@@ -6,7 +6,7 @@ export type LayoutType = "webhooks" | "messages"
 const App: FC = () => {
   const [layout, setLayout] = useState<LayoutType>("webhooks")
   return (
-    <div className="text-blue-800">
+    <div>
       <NavBar layout={layout} setLayout={setLayout} />
       <Dashboard layout={layout} />
     </div>

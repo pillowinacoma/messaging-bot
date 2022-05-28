@@ -9,7 +9,7 @@ const getData = (
 ) => {
   const url = new URL(baseApiURL + endPoint)
   Object.keys(params).forEach((k) => url.searchParams.append(k, params[k]))
-  fetch(url, {})
+  fetch(url)
     .then((res) => res.json())
     .then(
       (result) => {
@@ -40,3 +40,37 @@ export const getUserMessages = (
   params: { userEmail: string },
   execAfterLoad: (data: { messages: Message[] }) => void
 ): void => getData("/user/messages", params, execAfterLoad)
+
+type HTTPMethod = "post" | "delete" | "put"
+const mutateData = (
+  method: HTTPMethod,
+  endPoint: string,
+  params: Record<string, string | boolean>,
+  execAfterLoad: (data: any) => void
+) => {
+  const url = new URL(baseApiURL + endPoint)
+  fetch(url, {
+    method,
+    body: JSON.stringify(params),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        execAfterLoad(result)
+      },
+      (err) => {
+        console.warn(err)
+      }
+    )
+}
+
+export const createWebhook = (
+  params: {
+    userEmail: string
+    plateform: string
+    isPublic: boolean
+    url: string
+  },
+  execAfterLoad: (data: { webhook: Webhook }) => void
+): void => mutateData("post", "/webhook", params, execAfterLoad)

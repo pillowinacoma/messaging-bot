@@ -1,4 +1,5 @@
 import { Message, Webhook } from "@prisma/client"
+export type MessageWithWebhook = Message & { webhook: Webhook }
 
 const baseApiURL = `${location.origin}/api`
 
@@ -38,7 +39,7 @@ export const getUserMessagesByWebhook = (
 
 export const getUserMessages = (
   params: { userEmail: string },
-  execAfterLoad: (data: { messages: Message[] }) => void
+  execAfterLoad: (data: { messages: MessageWithWebhook[] }) => void
 ): void => getData("/user/messages", params, execAfterLoad)
 
 type HTTPMethod = "post" | "delete" | "put"
@@ -46,9 +47,10 @@ const mutateData = (
   method: HTTPMethod,
   endPoint: string,
   params: Record<string, string | boolean>,
-  execAfterLoad: (data: any) => void
+  execAfterLoad?: (data: any) => void,
+  urlToFetch?: string
 ) => {
-  const url = new URL(baseApiURL + endPoint)
+  const url = urlToFetch ? new URL(urlToFetch) : new URL(baseApiURL + endPoint)
   fetch(url, {
     method,
     body: JSON.stringify(params),
@@ -57,7 +59,7 @@ const mutateData = (
     .then((res) => res.json())
     .then(
       (result) => {
-        execAfterLoad(result)
+        if (execAfterLoad) execAfterLoad(result)
       },
       (err) => {
         console.warn(err)
@@ -74,3 +76,30 @@ export const createWebhook = (
   },
   execAfterLoad: (data: { webhook: Webhook }) => void
 ): void => mutateData("post", "/webhook", params, execAfterLoad)
+
+export const updateWebhook = (
+  params: {
+    userEmail: string
+    plateform: string
+    isPublic: boolean
+    url: string
+  },
+  execAfterLoad: (data: { webhook: Webhook }) => void
+): void => mutateData("put", "/webhook", params, execAfterLoad)
+
+export const deleteWebhook = (
+  params: {
+    url: string
+  },
+  execAfterLoad: (data: { webhook: Webhook }) => void
+): void => mutateData("delete", "/webhook", params, execAfterLoad)
+
+export const createMessage = (
+  params: {
+    userEmail: string
+    content: string
+    url: string
+    success: boolean
+  },
+  execAfterLoad: (data: Message) => void
+): void => mutateData("post", "/message", params, execAfterLoad)

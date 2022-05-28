@@ -1,15 +1,16 @@
 import { RequestHandler } from "express"
 
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, Webhook } from "@prisma/client"
 import { handleMissingParameters, handlePrismaError } from "./error-handlers"
 
 const prisma = new PrismaClient()
 
 export const createWebhook: RequestHandler = async (req, res) => {
-  const { userEmail, url, plateform, isPublic } = req.body
-
-  if (!userEmail || !url || !plateform) {
-    handleMissingParameters({ userEmail, url, plateform }, res)
+  const { userEmail, url, plateform, name, avatar } = req.body as Webhook & {
+    userEmail: string
+  }
+  if (!userEmail || !url || !plateform || !name) {
+    handleMissingParameters({ userEmail, url, plateform, name }, res)
     return
   }
   const user = await prisma.user.findFirst({
@@ -52,13 +53,14 @@ export const createWebhook: RequestHandler = async (req, res) => {
     .create({
       data: {
         plateform,
-        public: !!isPublic,
         url,
         users: {
           connect: {
             email: user?.email,
           },
         },
+        name,
+        avatar,
       },
       include: {
         users: true,
@@ -69,7 +71,7 @@ export const createWebhook: RequestHandler = async (req, res) => {
 }
 
 export const updateWebhook: RequestHandler = async (req, res) => {
-  const { url, plateform, isPublic } = req.body
+  const { url, plateform, name, avatar } = req.body as Webhook
   if (!url) {
     handleMissingParameters({ url }, res)
     return
@@ -81,7 +83,8 @@ export const updateWebhook: RequestHandler = async (req, res) => {
       },
       data: {
         plateform,
-        public: isPublic,
+        name,
+        avatar,
       },
     })
     .catch((e) => handlePrismaError(e, res))
@@ -89,11 +92,19 @@ export const updateWebhook: RequestHandler = async (req, res) => {
 }
 
 export const deleteWebhook: RequestHandler = async (req, res) => {
-  const { url } = req.body
+  const { url } = req.body as Pick<Webhook, "url">
   if (!url) {
     handleMissingParameters({ url }, res)
     return
   }
+
+  await prisma.message.deleteMany({
+    where: {
+      webhook: {
+        url,
+      },
+    },
+  })
   const webhook = await prisma.webhook
     .delete({
       where: {

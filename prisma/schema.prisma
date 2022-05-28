@@ -11,7 +11,7 @@ model Message {
   id        Int     @id @default(autoincrement())
   content   String?
   authorId  Int?
-  webhook   Webhook @relation(fields: [webhookId], references: [id])
+  webhook   Webhook? @relation(fields: [webhookId], references: [id])
   webhookId Int
   author    User?   @relation(fields: [authorId], references: [id])
   success   Boolean
@@ -29,7 +29,8 @@ model Webhook {
   id        Int       @id @default(autoincrement())
   url       String    @unique
   plateform String
-  public    Boolean
-  messages  Message[]
+  messages  Message[] 
   users     User[]
+  name      String
+  avatar    String?
 }

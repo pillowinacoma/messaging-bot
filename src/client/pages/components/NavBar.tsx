@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { LayoutType } from "../../App"
+import { LayoutType } from "../../Context"
 
 interface INavBar {
   layout: LayoutType

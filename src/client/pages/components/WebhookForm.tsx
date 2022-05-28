@@ -3,32 +3,47 @@ import { FC } from "react"
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useAppContext } from "../../Context"
-import { createWebhook, getUserWebhooks } from "../../utils"
-type Inputs = Omit<Webhook, "id" | "public"> & {
-  isPublic: boolean
+type Inputs = Omit<Webhook, "id"> & {
   userEmail: string
 }
 
-const WebhookForm: FC = () => {
-  const { email, setWebhooks } = useAppContext()
+interface IWebhookForm {
+  id: string
+  initialValues?: Inputs
+  onSubmit: SubmitHandler<Inputs>
+}
+const WebhookForm: FC<IWebhookForm> = ({ initialValues, onSubmit, id }) => {
+  const { email } = useAppContext()
   const { register, handleSubmit } = useForm<Inputs>({
     defaultValues: {
       userEmail: email,
+      ...initialValues,
     },
   })
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    createWebhook(data, (_) =>
-      getUserWebhooks({ userEmail: email }, ({ webhooks }) =>
-        setWebhooks(webhooks)
-      )
-    )
-  }
-
   return (
-    <div className="modal" id="my-modal-2">
+    <div className="modal" id={id}>
       <div className="modal-box">
         <h3 className="font-bold text-lg">Register Webhook</h3>
+
+
+        <label className="label cursor-pointer ">
+          <span className="label-text">Name</span>
+          <input
+            type="text"
+            className="input w-full max-w-xs"
+            {...register("name")}
+          />
+        </label>
+
+        <label className="label cursor-pointer ">
+          <span className="label-text">Avatar URL</span>
+          <input
+            type="text"
+            className="input w-full max-w-xs"
+            {...register("avatar")}
+          />
+        </label>
 
         <label className="label cursor-pointer">
           <span className="label-text">URL</span>
@@ -36,6 +51,7 @@ const WebhookForm: FC = () => {
             type="text"
             className="input w-full max-w-xs"
             {...register("url")}
+            readOnly={!!initialValues?.url}
           />
         </label>
 
@@ -48,18 +64,14 @@ const WebhookForm: FC = () => {
           />
         </label>
 
-        <label className="label cursor-pointer ">
-          <span className="label-text">Public ?</span>
-          <input
-            type="checkbox"
-            className="checkbox"
-            {...register("isPublic")}
-          />
-        </label>
-
         <div className="modal-action" onMouseDown={handleSubmit(onSubmit)}>
           <a href="#" className="btn">
-            Yay!
+            Submit
+          </a>
+        </div>
+        <div className="modal-action">
+          <a href="#" className="btn">
+            Cancle
           </a>
         </div>
       </div>

@@ -1,24 +1,31 @@
-import { Message, Webhook } from "@prisma/client"
-import { FC, useEffect, useState } from "react"
-import { LayoutType } from "../App"
+import { FC, useEffect } from "react"
 import { useAppContext } from "../Context"
 import { getUserMessages, getUserWebhooks } from "../utils"
+import MessagesTable from "./components/MessagesTable"
 import WebhookTable from "./components/WebhookTable"
 
-interface IDashboard {
-  layout: LayoutType
-}
-const Dashboard: FC<IDashboard> = ({ layout }) => {
-  const { email, setWebhooks, webhooks } = useAppContext()
+const Dashboard: FC = () => {
+  const { email, setWebhooks, messages, setMessages, webhooks, layout } =
+    useAppContext()
 
   useEffect(() => {
     getUserWebhooks({ userEmail: email }, ({ webhooks }) =>
       setWebhooks(webhooks)
     )
   }, [])
+  useEffect(() => {
+    getUserMessages({ userEmail: email }, ({ messages }) =>
+      setMessages(messages)
+    )
+  }, [])
 
   return (
     <div>
+      {layout === "messages" && (
+        <div>
+          <MessagesTable messages={messages} />
+        </div>
+      )}
       {layout === "webhooks" && (
         <div>
           <WebhookTable webhooks={webhooks} />

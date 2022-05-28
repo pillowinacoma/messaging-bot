@@ -35,6 +35,10 @@ export const getUserMessages: RequestHandler = async (req, res) => {
           email: userEmail,
         },
       },
+      include: {
+        author: true,
+        webhook: true,
+      },
     })
     .catch((e) => handlePrismaError(e, res))
   if (messages) res.status(200).send({ messages })
@@ -56,6 +60,10 @@ export const getUserWebhooks: RequestHandler = async (req, res) => {
             email: userEmail,
           },
         },
+      },
+      include: {
+        messages: true,
+        users: true,
       },
     })
     .catch((e) => handlePrismaError(e, res))
@@ -86,6 +94,10 @@ export const getUserMessagesByWebhook: RequestHandler = async (req, res) => {
             url,
           },
         },
+      },
+      include: {
+        author: true,
+        webhook: true,
       },
     })
     .catch((e) => handlePrismaError(e, res))

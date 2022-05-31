@@ -54,6 +54,7 @@ yarn start
 - **Vite**: bundler performant avec une configuration minimale
 - **tailwind**: styling CSS
 - **daisyui**: composants ui touts prets basées sur tailwind
+- **Insomnia**: un client HTTP léger, qui supporte le chainage de requetes. J'ai inclus une collections de tests pour ce client dans le fichier `Insomnia_query_test_collection.json`.
 
 # Améliorations:
 

@@ -51,7 +51,7 @@ yarn start
 
 # Choix techniques
 
-- **Prisma**: Client postgreSQL qui permet d'abstraire des requetes à la base de données sans écrire d'SQL, ce client permet de créer le schema de la base de données et genere automatiquement les types TypesScript
+- **Prisma**: Client postgreSQL qui permet d'envoiyer des requetes à la base de données sans écrire d'SQL, ce client permet de créer le schema de la base de données et genere automatiquement les types TypesScript
 - **express**: framework pour créer des API REST en Node.js
 - **Vite**: bundler performant avec une configuration minimale
 - **tailwind**: styling CSS

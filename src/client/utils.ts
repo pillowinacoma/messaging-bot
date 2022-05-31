@@ -103,3 +103,19 @@ export const createMessage = (
   },
   execAfterLoad: (data: Message) => void
 ): void => mutateData("post", "/message", params, execAfterLoad)
+
+export const loginUser = (
+  params: {
+    userEmail: string
+    password: string
+  },
+  execAfterLoad: (data: { userEmail: string }) => void
+): void => mutateData("post", "/login", params, execAfterLoad)
+
+export const createUser = (
+  params: {
+    userEmail: string
+    password: string
+  },
+  execAfterLoad: (data: { userEmail: string }) => void
+): void => mutateData("post", "/user", params, execAfterLoad)

@@ -5,19 +5,45 @@ import { handleMissingParameters, handlePrismaError } from "./error-handlers"
 const prisma = new PrismaClient()
 
 export const login: RequestHandler = async (req, res) => {
-  const { userEmail } = req.body
+  const { userEmail, password } = req.body
+  console.log("UGLIUJGIUGB", req.body)
 
-  if (!userEmail) {
-    handleMissingParameters({ userEmail }, res)
+  if (!userEmail || !password) {
+    handleMissingParameters({ userEmail, password }, res)
     return
   }
   const user = await prisma.user.findFirst({
     where: {
       email: userEmail,
+      password,
     },
   })
-  if (!user) res.status(401).send() // Unauthorised
-  res.status(200).send()
+  if (!user) {
+    res.status(401).send({ userEmail: "" }) // Unauthorised
+    return
+  }
+  res.status(200).send({ userEmail })
+}
+
+export const createUser: RequestHandler = async (req, res) => {
+  const { userEmail, password } = req.body
+
+  if (!userEmail || !password) {
+    handleMissingParameters({ userEmail, password }, res)
+  }
+
+  const user = await prisma.user
+    .create({
+      data: {
+        email: userEmail,
+        password,
+      },
+    })
+    .catch((e) => {
+      handlePrismaError(e, res)
+    })
+
+  if (user) res.status(201).send({ userEmail })
 }
 
 export const getUserMessages: RequestHandler = async (req, res) => {

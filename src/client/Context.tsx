@@ -14,7 +14,7 @@ export interface Context {
   layout: LayoutType
 }
 const defaultVal = {
-  email: "user@user.com",
+  email: "",
   setEmail: () => null,
   setWebhooks: () => null,
   setMessages: () => null,

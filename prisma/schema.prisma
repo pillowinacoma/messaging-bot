@@ -8,18 +8,19 @@ datasource db {
 }
 
 model Message {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String?
   authorId  Int?
   webhook   Webhook? @relation(fields: [webhookId], references: [id])
   webhookId Int
-  author    User?   @relation(fields: [authorId], references: [id])
+  author    User?    @relation(fields: [authorId], references: [id])
   success   Boolean
 }
 
 model User {
   id       Int       @id @default(autoincrement())
   email    String    @unique
+  password String
   name     String?
   messages Message[]
   webhooks Webhook[]
@@ -29,7 +30,7 @@ model Webhook {
   id        Int       @id @default(autoincrement())
   url       String    @unique
   plateform String
-  messages  Message[] 
+  messages  Message[]
   users     User[]
   name      String
   avatar    String?

@@ -1,6 +1,12 @@
 import express from "express"
 import { createMessage, deleteMessage } from "./message-functions"
-import { getUserMessages, getUserMessagesByWebhook, getUserWebhooks, login } from "./user-functions"
+import {
+  createUser,
+  getUserMessages,
+  getUserMessagesByWebhook,
+  getUserWebhooks,
+  login,
+} from "./user-functions"
 import {
   createWebhook,
   deleteWebhook,
@@ -11,7 +17,8 @@ import {
 
 const router = express.Router()
 
-router.get("/login", login)
+router.post("/login", login)
+router.post("/user", createUser)
 
 router.post("/webhook", createWebhook)
 router.put("/webhook", updateWebhook)
